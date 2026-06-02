@@ -11,3 +11,34 @@ SELECT category_id, name
 FROM category
 ORDER BY category_id
 """
+
+SELECT_FILMS_BY_GENRE = """
+SELECT
+    f.film_id,
+    f.title,
+    f.rating,
+    f.release_year,
+    c.name AS category
+FROM film AS f
+JOIN film_category AS fc ON f.film_id = fc.film_id
+JOIN category AS c ON fc.category_id = c.category_id
+WHERE c.category_id = %s
+ORDER BY f.film_id
+LIMIT 10 OFFSET %s
+"""
+
+SELECT_FILMS_BY_GENRE_AND_YEAR = """
+SELECT
+    f.film_id,
+    f.title,
+    f.rating,
+    f.release_year,
+    c.name AS category
+FROM film AS f
+JOIN film_category AS fc ON f.film_id = fc.film_id
+JOIN category AS c ON fc.category_id = c.category_id
+WHERE c.category_id = %s
+  AND f.release_year BETWEEN %s AND %s
+ORDER BY f.film_id
+LIMIT 10 OFFSET %s
+"""
