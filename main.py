@@ -1,16 +1,40 @@
-# This is a sample Python script.
+from mysql_client import get_genres, search_movies_by_title
+from ui import (
+    get_menu_choice,
+    get_movie_title,
+    show_genres,
+    show_menu,
+    show_message,
+    show_movies,
+)
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+
+def main() -> None:
+    while True:
+        show_menu()
+        choice = get_menu_choice()
+
+        if choice == "1":
+            title = get_movie_title()
+
+            if not title:
+                show_message("Title cannot be empty.")
+                continue
+
+            movies = search_movies_by_title(title)
+            show_movies(movies)
+
+        elif choice == "2":
+            genres = get_genres()
+            show_genres(genres)
+
+        elif choice == "0":
+            show_message("Goodbye!")
+            break
+
+        else:
+            show_message("Unknown option. Try again.")
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+if __name__ == "__main__":
+    main()
