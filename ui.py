@@ -57,3 +57,7 @@ def get_start_year() -> str:
 
 def get_end_year() -> str:
     return input("Enter end year: ").strip()
+
+
+def get_pagination_action() -> str:
+    return input("\nType 'N/n' for Next page, 'P/p' for previous page, 'Q/q' for quit to menu: ").strip().lower()
