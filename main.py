@@ -1,4 +1,5 @@
 from mysql_client import get_genres, search_movies_by_title, search_movies_by_genre, search_movies_by_genre_and_year
+from mongo_client import save_search_query, get_popular_queries
 from ui import (
     get_menu_choice,
     get_movie_title,
@@ -9,7 +10,8 @@ from ui import (
     get_genre_id,
     get_start_year,
     get_end_year,
-    get_pagination_action
+    get_pagination_action,
+    show_popular_queries
 )
 
 PAGE_SIZE = 10
@@ -53,7 +55,7 @@ def show_paginated_movies(search_function, *args) -> None:
             show_message("Unknown command. Use 'N/n', 'P/p' or 'Q/q'.")
 
 
-def choose_genre_id() -> int | None:
+def choose_genre() -> tuple[int, str] | None:
     genres = get_genres()
     show_genres(genres)
 
@@ -65,13 +67,16 @@ def choose_genre_id() -> int | None:
 
     genre_id = int(genre_id)
 
-    valid_genre_ids = {genre["category_id"] for genre in genres}
+    genres_by_id = {
+        genre["category_id"]: genre["name"]
+        for genre in genres
+    }
 
-    if genre_id not in valid_genre_ids:
+    if genre_id not in genres_by_id:
         show_message("Unknown genre number.")
         return None
 
-    return genre_id
+    return genre_id, genres_by_id[genre_id]
 
 
 def main() -> None:
@@ -86,26 +91,40 @@ def main() -> None:
                 show_message("Title cannot be empty.")
                 continue
 
-            show_paginated_movies(search_movies_by_title,title)
+            save_search_query(search_type="title", query=title)
+
+            show_paginated_movies(search_movies_by_title, title)
 
         elif choice == "2":
             genres = get_genres()
             show_genres(genres)
 
         elif choice == "3":
-            genre_id = choose_genre_id()
 
-            if genre_id is None:
+            genre = choose_genre()
+
+            if genre is None:
                 continue
+
+            genre_id, genre_name = genre
+
+            save_search_query(
+
+                search_type="genre",
+
+                query=genre_name,
+
+            )
 
             show_paginated_movies(search_movies_by_genre, genre_id)
 
         elif choice == "4":
-            genre_id = choose_genre_id()
 
-            if genre_id is None:
+            genre = choose_genre()
+
+            if genre is None:
                 continue
-
+            genre_id, genre_name = genre
             start_year = get_start_year()
             end_year = get_end_year()
 
@@ -120,7 +139,16 @@ def main() -> None:
                 show_message("Start year cannot be greater than end year.")
                 continue
 
-            show_paginated_movies(search_movies_by_genre_and_year,genre_id, start_year, end_year)
+            save_search_query(
+                search_type="genre_and_year",
+                query=f"{genre_name} | {start_year}-{end_year}"
+            )
+
+            show_paginated_movies(search_movies_by_genre_and_year, genre_id, start_year, end_year)
+
+        elif choice == "5":
+            queries = get_popular_queries()
+            show_popular_queries(queries)
 
         elif choice == "0":
             show_message("Goodbye!")

@@ -4,6 +4,7 @@ def show_menu() -> None:
     print("2. Show genres")
     print("3. Search movies by genre")
     print("4. Search movies by genre and release year")
+    print("5. Show popular queries")
     print("0. Exit")
 
 
@@ -61,3 +62,21 @@ def get_end_year() -> str:
 
 def get_pagination_action() -> str:
     return input("\nType 'N/n' for Next page, 'P/p' for previous page, 'Q/q' for quit to menu: ").strip().lower()
+
+
+def show_popular_queries(queries: list[dict]) -> None:
+    if not queries:
+        print("No search history yet.")
+        return
+
+    print("\nPopular queries:")
+
+    for number, item in enumerate(queries, start=1):
+        query_data = item["_id"]
+
+        print(
+            f"{number}. "
+            f"{query_data['query']} | "
+            f"Type: {query_data['search_type']} | "
+            f"Searches: {item['count']}"
+        )
