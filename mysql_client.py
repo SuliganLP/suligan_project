@@ -1,7 +1,7 @@
 import pymysql
 from pymysql.cursors import DictCursor
 from settings import MYSQL_CONFIG
-from sql_queries import SELECT_FILMS_BY_TITLE, SELECT_GENRES, SELECT_FILMS_BY_GENRE, SELECT_FILMS_BY_GENRE_AND_YEAR
+from sql_queries import SELECT_FILMS_BY_TITLE, SELECT_GENRES, SELECT_FILMS_BY_GENRE, SELECT_FILMS_BY_GENRE_AND_YEAR, SELECT_RELEASE_YEAR_RANGE
 
 
 def search_movies_by_title(title: str, offset: int = 0) -> list[dict]:
@@ -35,3 +35,10 @@ def search_movies_by_genre_and_year(
         with connection.cursor() as cursor:
             cursor.execute(SELECT_FILMS_BY_GENRE_AND_YEAR, (genre_id, start_year, end_year, offset))
             return cursor.fetchall()
+
+
+def get_release_year_range() -> dict | None:
+    with pymysql.connect(**MYSQL_CONFIG, cursorclass=DictCursor) as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(SELECT_RELEASE_YEAR_RANGE)
+            return cursor.fetchone()

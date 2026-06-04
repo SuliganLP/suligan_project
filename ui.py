@@ -80,3 +80,14 @@ def show_popular_queries(queries: list[dict]) -> None:
             f"Type: {query_data['search_type']} | "
             f"Searches: {item['count']}"
         )
+
+
+def show_release_year_range(year_range: dict | None) -> None:
+    if not year_range:
+        print("Release year range is unavailable.")
+        return
+
+    print(
+        "\nAvailable release years: "
+        f"{year_range['min_year']}-{year_range['max_year']}"
+    )

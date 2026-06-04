@@ -42,3 +42,11 @@ WHERE c.category_id = %s
 ORDER BY f.film_id
 LIMIT 10 OFFSET %s
 """
+
+SELECT_RELEASE_YEAR_RANGE = """
+SELECT
+    MIN(release_year) AS min_year,
+    MAX(release_year) AS max_year
+FROM film
+WHERE release_year IS NOT NULL
+"""

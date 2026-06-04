@@ -1,4 +1,5 @@
-from mysql_client import get_genres, search_movies_by_title, search_movies_by_genre, search_movies_by_genre_and_year
+from mysql_client import get_genres, search_movies_by_title, search_movies_by_genre, search_movies_by_genre_and_year, \
+    get_release_year_range
 from mongo_client import save_search_query, get_popular_queries
 from ui import (
     get_menu_choice,
@@ -11,7 +12,8 @@ from ui import (
     get_start_year,
     get_end_year,
     get_pagination_action,
-    show_popular_queries
+    show_popular_queries,
+    show_release_year_range
 )
 
 PAGE_SIZE = 10
@@ -58,7 +60,6 @@ def show_paginated_movies(search_function, *args) -> None:
 def choose_genre() -> tuple[int, str] | None:
     genres = get_genres()
     show_genres(genres)
-
     genre_id = get_genre_id()
 
     if not genre_id.isdigit():
@@ -108,13 +109,7 @@ def main() -> None:
 
             genre_id, genre_name = genre
 
-            save_search_query(
-
-                search_type="genre",
-
-                query=genre_name,
-
-            )
+            save_search_query(search_type="genre", query=genre_name)
 
             show_paginated_movies(search_movies_by_genre, genre_id)
 
@@ -125,6 +120,8 @@ def main() -> None:
             if genre is None:
                 continue
             genre_id, genre_name = genre
+            year_range = get_release_year_range()
+            show_release_year_range(year_range)
             start_year = get_start_year()
             end_year = get_end_year()
 
@@ -144,7 +141,12 @@ def main() -> None:
                 query=f"{genre_name} | {start_year}-{end_year}"
             )
 
-            show_paginated_movies(search_movies_by_genre_and_year, genre_id, start_year, end_year)
+            show_paginated_movies(
+                search_movies_by_genre_and_year,
+                genre_id,
+                start_year,
+                end_year
+            )
 
         elif choice == "5":
             queries = get_popular_queries()

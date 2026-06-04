@@ -15,7 +15,7 @@ collection = database[MONGO_COLLECTION]
 
 def save_search_query(
         search_type: str,
-        query: str,
+        query: str
 ) -> None:
     collection.insert_one(
         {
