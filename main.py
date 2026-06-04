@@ -1,5 +1,10 @@
-from mysql_client import get_genres, search_movies_by_title, search_movies_by_genre, search_movies_by_genre_and_year, \
+from mysql_client import (
+    get_genres,
+    search_movies_by_title,
+    search_movies_by_genre,
+    search_movies_by_genre_and_year,
     get_release_year_range
+)
 from mongo_client import save_search_query, get_popular_queries
 from pymongo.errors import PyMongoError
 from pymysql import MySQLError
@@ -162,7 +167,8 @@ def main() -> None:
                 queries = get_popular_queries()
                 show_popular_queries(queries)
             except PyMongoError:
-                show_message("Could not load popular queries. MongoDB is unavailable.")
+                show_message("Could not load popular queries."
+                             " MongoDB is unavailable.")
 
         elif choice == "0":
             show_message("Goodbye!")
@@ -176,4 +182,5 @@ if __name__ == "__main__":
     try:
         main()
     except MySQLError:
-        show_message("MySQL connection failed. Please check the server and credentials.")
+        show_message("MySQL connection failed. "
+                     "Please check the server and credentials.")

@@ -61,7 +61,8 @@ def get_end_year() -> str:
 
 
 def get_pagination_action() -> str:
-    return input("\nType 'N/n' for Next page, 'P/p' for previous page, 'Q/q' for quit to menu: ").strip().lower()
+    return input("\nType 'N/n' for Next page, 'P/p' for previous page, "
+                 "'Q/q' for quit to menu: ").strip().lower()
 
 
 def show_popular_queries(queries: list[dict]) -> None:
