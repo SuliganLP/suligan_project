@@ -1,6 +1,8 @@
 from mysql_client import get_genres, search_movies_by_title, search_movies_by_genre, search_movies_by_genre_and_year, \
     get_release_year_range
 from mongo_client import save_search_query, get_popular_queries
+from pymongo.errors import PyMongoError
+from pymysql import MySQLError
 from ui import (
     get_menu_choice,
     get_movie_title,
@@ -17,6 +19,13 @@ from ui import (
 )
 
 PAGE_SIZE = 10
+
+
+def try_save_search_query(search_type: str, query: str) -> None:
+    try:
+        save_search_query(search_type=search_type, query=query)
+    except PyMongoError:
+        show_message("Warning: search history could not be saved.")
 
 
 def show_paginated_movies(search_function, *args) -> None:
@@ -92,7 +101,7 @@ def main() -> None:
                 show_message("Title cannot be empty.")
                 continue
 
-            save_search_query(search_type="title", query=title)
+            try_save_search_query(search_type="title", query=title)
 
             show_paginated_movies(search_movies_by_title, title)
 
@@ -109,7 +118,7 @@ def main() -> None:
 
             genre_id, genre_name = genre
 
-            save_search_query(search_type="genre", query=genre_name)
+            try_save_search_query(search_type="genre", query=genre_name)
 
             show_paginated_movies(search_movies_by_genre, genre_id)
 
@@ -136,7 +145,7 @@ def main() -> None:
                 show_message("Start year cannot be greater than end year.")
                 continue
 
-            save_search_query(
+            try_save_search_query(
                 search_type="genre_and_year",
                 query=f"{genre_name} | {start_year}-{end_year}"
             )
@@ -149,8 +158,11 @@ def main() -> None:
             )
 
         elif choice == "5":
-            queries = get_popular_queries()
-            show_popular_queries(queries)
+            try:
+                queries = get_popular_queries()
+                show_popular_queries(queries)
+            except PyMongoError:
+                show_message("Could not load popular queries. MongoDB is unavailable.")
 
         elif choice == "0":
             show_message("Goodbye!")
@@ -161,4 +173,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except MySQLError:
+        show_message("MySQL connection failed. Please check the server and credentials.")
